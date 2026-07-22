@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "npm --prefix server install --legacy-peer-deps && npm --prefix client install --legacy-peer-deps",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
@@ -10,6 +11,10 @@
     "build:client": "npm --prefix client run build",
     "build": "npm run build:server && npm run build:client",
     "seed": "npm --prefix server run seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.0",
+    "prisma": "^5.10.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
