@@ -1,0 +1,135 @@
+// Prisma Schema for Agenda Inteligente
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  phone         String?
+  password      String
+  photo         String?
+  role          String         @default("USER") // USER or ADMIN
+  googleId      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  appointments  Appointment[]
+  categories    Category[]
+  notifications Notification[]
+  logs          SystemLog[]
+  settings      Settings?
+}
+
+model Category {
+  id           String        @id @default(uuid())
+  name         String
+  color        String        @default("#6750A4")
+  icon         String        @default("bookmark")
+  isSystem     Boolean       @default(false)
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  date        String   // YYYY-MM-DD
+  time        String   // HH:mm
+  location    String?
+  notes       String?
+  priority    String   @default("NORMAL") // VERY_HIGH, HIGH, NORMAL, LOW
+  status      String   @default("SCHEDULED") // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
+  color       String?  // Custom HEX color override
+  tag         String?  // Custom tag label
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  attachments   Attachment[]
+  confirmations Confirmation[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Confirmation {
+  id             String      @id @default(uuid())
+  appointmentId String
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  status         String      @default("PENDING") // PENDING, CONFIRMED, COMPLETED, RESCHEDULED, CANCELLED
+  confirmedAt    DateTime?
+  rescheduleDate String?
+  rescheduleTime String?
+  notes          String?
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Notification {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title        String
+  message      String
+  type         String    @default("APP") // EMAIL, PUSH, APP
+  status       String    @default("PENDING") // PENDING, SENT, FAILED
+  scheduledFor DateTime?
+  sentAt       DateTime?
+
+  createdAt    DateTime  @default(now())
+}
+
+model SystemLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  level     String   @default("INFO") // INFO, WARN, ERROR
+  message   String
+  metadata  String?
+  timestamp DateTime @default(now())
+}
+
+model Settings {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  morningEmail    String   @default("07:00")
+  afternoonEmail  String   @default("12:00")
+  emailEnabled    Boolean  @default(true)
+  pushEnabled     Boolean  @default(true)
+  themePreference String   @default("light") // light, dark, system
+  
+  updatedAt       DateTime @updatedAt
+}
+
+model Attachment {
+  id            String      @id @default(uuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  filename      String
+  fileUrl       String
+  mimeType      String?
+  size          Int?
+
+  createdAt     DateTime    @default(now())
+}
