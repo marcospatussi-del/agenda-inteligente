@@ -42,7 +42,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start Server & Cron
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor Agenda Inteligente rodando na porta ${PORT}`);
-  initCronJobs();
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor Agenda Inteligente rodando na porta ${PORT}`);
+    initCronJobs();
+  });
+}
+
+module.exports = app;
