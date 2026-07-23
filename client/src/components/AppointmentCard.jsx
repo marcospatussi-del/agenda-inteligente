@@ -88,6 +88,21 @@ export default function AppointmentCard({ appointment, onEdit, onDelete, onStatu
                 sx={{ fontSize: '0.7rem', fontWeight: 700 }}
               />
             )}
+            {appointment.isShared === false && (
+              <Chip
+                icon={<Icon name="lock" fontSize={14} />}
+                label="Privado"
+                size="small"
+                sx={{
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  bgcolor: 'rgba(229,57,53,0.10)',
+                  color: '#E53935',
+                  borderColor: '#E53935'
+                }}
+                variant="outlined"
+              />
+            )}
           </Box>
 
           <IconButton size="small" onClick={handleMenuClick}>

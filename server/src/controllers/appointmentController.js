@@ -28,7 +28,14 @@ async function getAppointments(req, res) {
     const { date, startDate, endDate, categoryId, status, priority, search } = req.query;
 
     const accessibleUserIds = await getAccessibleUserIds(userId, userEmail);
-    const whereClause = { userId: { in: accessibleUserIds } };
+
+    // Build where clause: own appointments (all) + shared appointments (only isShared=true)
+    const whereClause = {
+      OR: [
+        { userId },
+        { userId: { in: accessibleUserIds.filter(id => id !== userId) }, isShared: true }
+      ]
+    };
 
     if (date) {
       whereClause.date = date;
@@ -84,7 +91,12 @@ async function getDashboardSummary(req, res) {
     const accessibleUserIds = await getAccessibleUserIds(userId, userEmail);
 
     const allUserAppointments = await prisma.appointment.findMany({
-      where: { userId: { in: accessibleUserIds } },
+      where: {
+        OR: [
+          { userId },
+          { userId: { in: accessibleUserIds.filter(id => id !== userId) }, isShared: true }
+        ]
+      },
       include: {
         user: { select: { id: true, name: true, email: true } },
         category: true,
@@ -155,7 +167,8 @@ async function createAppointment(req, res) {
       priority,
       status,
       color,
-      tag
+      tag,
+      isShared
     } = req.body;
 
     if (!title || !categoryId || !date || !time) {
@@ -175,6 +188,7 @@ async function createAppointment(req, res) {
         status: status || 'SCHEDULED',
         color: color || null,
         tag: tag || null,
+        isShared: isShared !== undefined ? Boolean(isShared) : true,
         userId
       },
       include: {
@@ -235,7 +249,8 @@ async function updateAppointment(req, res) {
       priority,
       status,
       color,
-      tag
+      tag,
+      isShared
     } = req.body;
 
     const updated = await prisma.appointment.update({
@@ -251,7 +266,8 @@ async function updateAppointment(req, res) {
         ...(priority && { priority }),
         ...(status && { status }),
         ...(color !== undefined && { color }),
-        ...(tag !== undefined && { tag })
+        ...(tag !== undefined && { tag }),
+        ...(isShared !== undefined && { isShared: Boolean(isShared) })
       },
       include: {
         category: true,

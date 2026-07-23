@@ -55,6 +55,7 @@ model Appointment {
   status      String   @default("SCHEDULED") // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
   color       String?  // Custom HEX color override
   tag         String?  // Custom tag label
+  isShared    Boolean  @default(true) // false = visible only to owner, even in shared calendars
 
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])

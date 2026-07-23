@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
-  MenuItem, Box, Typography, Grid, IconButton, FormControl, InputLabel, Select
+  MenuItem, Box, Typography, Grid, IconButton, FormControl, InputLabel, Select,
+  Switch, FormControlLabel, Divider
 } from '@mui/material';
 import { Icon } from './Icons';
 
@@ -21,7 +22,8 @@ export default function AppointmentModal({ open, onClose, onSave, initialData, c
     priority: 'NORMAL',
     status: 'SCHEDULED',
     color: '#6750A4',
-    tag: ''
+    tag: '',
+    isShared: true
   });
 
   useEffect(() => {
@@ -37,7 +39,8 @@ export default function AppointmentModal({ open, onClose, onSave, initialData, c
         priority: initialData.priority || 'NORMAL',
         status: initialData.status || 'SCHEDULED',
         color: initialData.color || '#6750A4',
-        tag: initialData.tag || ''
+        tag: initialData.tag || '',
+        isShared: initialData.isShared !== undefined ? initialData.isShared : true
       });
     } else {
       setFormData({
@@ -51,7 +54,8 @@ export default function AppointmentModal({ open, onClose, onSave, initialData, c
         priority: 'NORMAL',
         status: 'SCHEDULED',
         color: '#6750A4',
-        tag: ''
+        tag: '',
+        isShared: true
       });
     }
   }, [initialData, categories, open]);
@@ -251,6 +255,38 @@ export default function AppointmentModal({ open, onClose, onSave, initialData, c
                     }}
                   />
                 ))}
+              </Box>
+            </Grid>
+
+            {/* Privacy Toggle */}
+            <Grid item xs={12}>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 2,
+                borderRadius: '16px',
+                bgcolor: formData.isShared ? 'rgba(103,80,164,0.07)' : 'rgba(229,57,53,0.07)',
+                border: '1px solid',
+                borderColor: formData.isShared ? 'primary.light' : 'error.light',
+                transition: 'all 0.25s ease'
+              }}>
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.3 }}>
+                    {formData.isShared ? '👥 Visível na Agenda Compartilhada' : '🔒 Privado (só você vê)'}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {formData.isShared
+                      ? 'Pessoas com acesso à sua agenda também verão este compromisso.'
+                      : 'Este compromisso não aparecerá para quem tiver acesso à sua agenda.'}
+                  </Typography>
+                </Box>
+                <Switch
+                  checked={formData.isShared}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, isShared: e.target.checked }))}
+                  color="primary"
+                />
               </Box>
             </Grid>
           </Grid>
