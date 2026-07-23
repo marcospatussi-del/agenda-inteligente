@@ -91,7 +91,8 @@ function MainApp() {
       handleCloseModal();
       window.location.reload();
     } catch (err) {
-      alert('Erro ao salvar compromisso.');
+      const msg = err.response?.data?.error || err.message || 'Erro desconhecido ao salvar compromisso.';
+      alert(`Erro ao salvar compromisso:\n${msg}`);
     }
   };
 
