@@ -32,7 +32,7 @@ export default function Sidebar({ open, onClose, variant = 'temporary', onOpenNe
       {/* Quick Add Button */}
       <Box sx={{ mb: 1.5, mt: 1 }}>
         <ListItemButton
-          onClick={onOpenNewEvent}
+          onClick={() => onOpenNewEvent()}
           sx={{
             borderRadius: '28px',
             bgcolor: 'primary.main',

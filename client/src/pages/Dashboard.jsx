@@ -107,7 +107,7 @@ export default function Dashboard({ onOpenNewEvent, categories = [] }) {
             variant="contained"
             color="primary"
             startIcon={<Icon name="add" />}
-            onClick={onOpenNewEvent}
+            onClick={() => onOpenNewEvent()}
             sx={{ borderRadius: '24px', px: 3, fontWeight: 700 }}
           >
             Novo Compromisso
@@ -210,7 +210,7 @@ export default function Dashboard({ onOpenNewEvent, categories = [] }) {
               <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
                 🎉 Você não tem compromissos agendados para hoje.
               </Typography>
-              <Button variant="outlined" onClick={onOpenNewEvent}>
+              <Button variant="outlined" onClick={() => onOpenNewEvent()}>
                 Adicionar Compromisso
               </Button>
             </Paper>

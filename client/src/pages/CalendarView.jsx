@@ -153,7 +153,7 @@ export default function CalendarView({ onOpenNewEvent, categories = [] }) {
             <ToggleButton value="list"><Icon name="list" sx={{ mr: 0.5 }} /> Lista</ToggleButton>
           </ToggleButtonGroup>
 
-          <Button variant="contained" startIcon={<Icon name="add" />} onClick={onOpenNewEvent} sx={{ borderRadius: '24px', px: 3, fontWeight: 700 }}>
+          <Button variant="contained" startIcon={<Icon name="add" />} onClick={() => onOpenNewEvent()} sx={{ borderRadius: '24px', px: 3, fontWeight: 700 }}>
             Novo Evento
           </Button>
         </Box>
@@ -263,7 +263,7 @@ export default function CalendarView({ onOpenNewEvent, categories = [] }) {
               <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
                 Nenhum compromisso encontrado neste período.
               </Typography>
-              <Button variant="outlined" onClick={onOpenNewEvent} sx={{ mt: 2 }}>
+              <Button variant="outlined" onClick={() => onOpenNewEvent()} sx={{ mt: 2 }}>
                 Agendar Novo Compromisso
               </Button>
             </Paper>
