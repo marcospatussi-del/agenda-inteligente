@@ -4,11 +4,11 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:path*",
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!assets/|.*\\..*).*)",
+      "source": "/:path((?!assets/|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]

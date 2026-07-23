@@ -5,8 +5,13 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('agenda_user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('agenda_user');
+      return (savedUser && savedUser !== 'undefined' && savedUser !== 'null') ? JSON.parse(savedUser) : null;
+    } catch (e) {
+      console.error('Erro ao ler usuário do localStorage:', e);
+      return null;
+    }
   });
   const [loading, setLoading] = useState(true);
 
