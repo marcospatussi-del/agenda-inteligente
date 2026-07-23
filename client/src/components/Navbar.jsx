@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem,
-  Tooltip, Badge, Box, Popover, List, ListItem, ListItemText, Divider
+  Tooltip, Badge, Box, Popover, List, ListItem, ListItemText, Divider, Button
 } from '@mui/material';
 import { Icon } from './Icons';
 import { useAuth } from '../context/AuthContext';
