@@ -1,12 +1,34 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+async function getAccessibleUserIds(userId, userEmail) {
+  try {
+    const shares = await prisma.calendarShare.findMany({
+      where: {
+        OR: [
+          { sharedWithEmail: (userEmail || '').toLowerCase() },
+          { sharedWithId: userId }
+        ]
+      },
+      select: { ownerId: true }
+    });
+
+    const ownerIds = shares.map(s => s.ownerId);
+    return Array.from(new Set([userId, ...ownerIds]));
+  } catch (err) {
+    console.error('Erro ao buscar permissões de agenda compartilhada:', err);
+    return [userId];
+  }
+}
+
 async function getAppointments(req, res) {
   try {
     const userId = req.user.id;
+    const userEmail = req.user.email;
     const { date, startDate, endDate, categoryId, status, priority, search } = req.query;
 
-    const whereClause = { userId };
+    const accessibleUserIds = await getAccessibleUserIds(userId, userEmail);
+    const whereClause = { userId: { in: accessibleUserIds } };
 
     if (date) {
       whereClause.date = date;
@@ -33,6 +55,9 @@ async function getAppointments(req, res) {
     const appointments = await prisma.appointment.findMany({
       where: whereClause,
       include: {
+        user: {
+          select: { id: true, name: true, email: true }
+        },
         category: true,
         confirmations: true,
         attachments: true
@@ -53,11 +78,18 @@ async function getAppointments(req, res) {
 async function getDashboardSummary(req, res) {
   try {
     const userId = req.user.id;
+    const userEmail = req.user.email;
     const todayStr = new Date().toISOString().split('T')[0];
 
+    const accessibleUserIds = await getAccessibleUserIds(userId, userEmail);
+
     const allUserAppointments = await prisma.appointment.findMany({
-      where: { userId },
-      include: { category: true, confirmations: true }
+      where: { userId: { in: accessibleUserIds } },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        category: true,
+        confirmations: true
+      }
     });
 
     const todayAppointments = allUserAppointments.filter(a => a.date === todayStr);
@@ -180,13 +212,15 @@ async function updateAppointment(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
+    const userEmail = req.user.email;
 
     const existing = await prisma.appointment.findUnique({ where: { id } });
     if (!existing) {
       return res.status(404).json({ error: 'Compromisso não encontrado.' });
     }
 
-    if (existing.userId !== userId && req.user.role !== 'ADMIN') {
+    const accessibleUserIds = await getAccessibleUserIds(userId, userEmail);
+    if (!accessibleUserIds.includes(existing.userId) && req.user.role !== 'ADMIN') {
       return res.status(403).json({ error: 'Acesso negado.' });
     }
 
@@ -236,13 +270,15 @@ async function deleteAppointment(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
+    const userEmail = req.user.email;
 
     const existing = await prisma.appointment.findUnique({ where: { id } });
     if (!existing) {
       return res.status(404).json({ error: 'Compromisso não encontrado.' });
     }
 
-    if (existing.userId !== userId && req.user.role !== 'ADMIN') {
+    const accessibleUserIds = await getAccessibleUserIds(userId, userEmail);
+    if (!accessibleUserIds.includes(existing.userId) && req.user.role !== 'ADMIN') {
       return res.status(403).json({ error: 'Acesso negado.' });
     }
 

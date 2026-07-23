@@ -9,6 +9,7 @@ const appointmentRoutes = require('./routes/appointmentRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const confirmationRoutes = require('./routes/confirmationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const shareRoutes = require('./routes/shareRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +25,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/confirmations', confirmationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/shares', shareRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

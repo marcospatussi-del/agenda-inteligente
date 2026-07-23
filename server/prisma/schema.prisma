@@ -27,6 +27,8 @@ model User {
   notifications Notification[]
   logs          SystemLog[]
   settings      Settings?
+  sharesCreated CalendarShare[] @relation("OwnerShares")
+  sharesReceived CalendarShare[] @relation("ReceivedShares")
 }
 
 model Category {
@@ -133,3 +135,19 @@ model Attachment {
 
   createdAt     DateTime    @default(now())
 }
+
+model CalendarShare {
+  id              String   @id @default(uuid())
+  ownerId         String
+  owner           User     @relation("OwnerShares", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  sharedWithEmail String
+  sharedWithId    String?
+  sharedWithUser  User?    @relation("ReceivedShares", fields: [sharedWithId], references: [id], onDelete: Cascade)
+
+  canEdit         Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  @@unique([ownerId, sharedWithEmail])
+}
+

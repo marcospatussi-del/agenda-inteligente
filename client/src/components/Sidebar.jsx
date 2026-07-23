@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 
 const drawerWidth = 260;
 
-export default function Sidebar({ open, onClose, variant = 'temporary', onOpenNewEvent }) {
+export default function Sidebar({ open, onClose, variant = 'temporary', onOpenNewEvent, onOpenShare }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -30,7 +30,7 @@ export default function Sidebar({ open, onClose, variant = 'temporary', onOpenNe
   const drawerContent = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
       {/* Quick Add Button */}
-      <Box sx={{ mb: 3, mt: 1 }}>
+      <Box sx={{ mb: 1.5, mt: 1 }}>
         <ListItemButton
           onClick={onOpenNewEvent}
           sx={{
@@ -51,6 +51,31 @@ export default function Sidebar({ open, onClose, variant = 'temporary', onOpenNe
           <ListItemText primary="Novo Compromisso" primaryTypographyProps={{ fontWeight: 700, fontSize: '0.95rem' }} />
         </ListItemButton>
       </Box>
+
+      {/* Share Calendar Button */}
+      {onOpenShare && (
+        <Box sx={{ mb: 3 }}>
+          <ListItemButton
+            onClick={onOpenShare}
+            sx={{
+              borderRadius: '28px',
+              border: '1.5px solid',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              py: 1.2,
+              px: 3,
+              '&:hover': {
+                bgcolor: 'primary.light',
+              }
+            }}
+          >
+            <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+              <Icon name="share" />
+            </ListItemIcon>
+            <ListItemText primary="Compartilhar Agenda" primaryTypographyProps={{ fontWeight: 700, fontSize: '0.9rem' }} />
+          </ListItemButton>
+        </Box>
+      )}
 
       <Typography variant="caption" sx={{ px: 2, pb: 1, fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         Menu Principal

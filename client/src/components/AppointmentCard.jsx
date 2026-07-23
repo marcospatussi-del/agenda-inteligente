@@ -78,6 +78,16 @@ export default function AppointmentCard({ appointment, onEdit, onDelete, onStatu
             {appointment.tag && (
               <Chip label={`#${appointment.tag}`} size="small" variant="filled" sx={{ fontSize: '0.7rem' }} />
             )}
+            {appointment.user?.name && (
+              <Chip
+                icon={<Icon name="people" fontSize={14} />}
+                label={`Agenda de: ${appointment.user.name}`}
+                size="small"
+                color="secondary"
+                variant="outlined"
+                sx={{ fontSize: '0.7rem', fontWeight: 700 }}
+              />
+            )}
           </Box>
 
           <IconButton size="small" onClick={handleMenuClick}>

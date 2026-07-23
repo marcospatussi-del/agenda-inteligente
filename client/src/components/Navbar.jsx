@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useThemeContext } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
-export default function Navbar({ onToggleSidebar }) {
+export default function Navbar({ onToggleSidebar, onOpenShare }) {
   const { user, logout } = useAuth();
   const { mode, toggleTheme } = useThemeContext();
   const navigate = useNavigate();
@@ -39,6 +39,21 @@ export default function Navbar({ onToggleSidebar }) {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* Share Calendar Button */}
+          {onOpenShare && (
+            <Tooltip title="Compartilhar Agenda com outro e-mail">
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={onOpenShare}
+                startIcon={<Icon name="share" color="#6750A4" />}
+                sx={{ borderRadius: '18px', fontWeight: 700, px: 2, display: { xs: 'none', sm: 'inline-flex' } }}
+              >
+                Compartilhar Agenda
+              </Button>
+            </Tooltip>
+          )}
           {/* Dark / Light Toggle */}
           <Tooltip title={`Alternar para tema ${mode === 'light' ? 'escuro' : 'claro'}`}>
             <IconButton onClick={toggleTheme} color="inherit">
@@ -101,6 +116,11 @@ export default function Navbar({ onToggleSidebar }) {
             <MenuItem onClick={() => { setAnchorUser(null); navigate('/profile'); }}>
               <Icon name="settings" sx={{ mr: 1.5 }} /> Perfil e Configurações
             </MenuItem>
+            {onOpenShare && (
+              <MenuItem onClick={() => { setAnchorUser(null); onOpenShare(); }}>
+                <Icon name="share" sx={{ mr: 1.5, color: '#6750A4' }} /> Compartilhar Agenda
+              </MenuItem>
+            )}
             {user?.role === 'ADMIN' && (
               <MenuItem onClick={() => { setAnchorUser(null); navigate('/admin'); }}>
                 <Icon name="dashboard" sx={{ mr: 1.5, color: 'primary.main' }} /> Painel Admin

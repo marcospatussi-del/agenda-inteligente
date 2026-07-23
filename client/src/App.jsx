@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import AppointmentModal from './components/AppointmentModal';
+import ShareModal from './components/ShareModal';
 import Dashboard from './pages/Dashboard';
 import CalendarView from './pages/CalendarView';
 import ConfirmationCenter from './pages/ConfirmationCenter';
@@ -15,7 +16,7 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import API from './services/api';
 
-function ProtectedLayout({ children, categories, onRefreshCategories, onOpenModal }) {
+function ProtectedLayout({ children, categories, onRefreshCategories, onOpenModal, onOpenShare }) {
   const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -33,12 +34,13 @@ function ProtectedLayout({ children, categories, onRefreshCategories, onOpenModa
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} onOpenShare={onOpenShare} />
       <Box sx={{ display: 'flex', flexGrow: 1 }}>
         <Sidebar
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           onOpenNewEvent={() => onOpenModal()}
+          onOpenShare={onOpenShare}
         />
         <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, sm: 3, md: 4 } }}>
           {children}
@@ -52,6 +54,7 @@ function MainApp() {
   const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [editingAppt, setEditingAppt] = useState(null);
 
   const fetchCategories = async () => {
@@ -86,10 +89,14 @@ function MainApp() {
         await API.post('/appointments', formData);
       }
       handleCloseModal();
-      window.location.reload(); // Simple refresh to update views
+      window.location.reload();
     } catch (err) {
       alert('Erro ao salvar compromisso.');
     }
+  };
+
+  const handleOpenShare = () => {
+    setShareModalOpen(true);
   };
 
   return (
@@ -98,31 +105,31 @@ function MainApp() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/" element={
-          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal}>
+          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal} onOpenShare={handleOpenShare}>
             <Dashboard onOpenNewEvent={handleOpenModal} categories={categories} />
           </ProtectedLayout>
         } />
 
         <Route path="/calendar" element={
-          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal}>
+          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal} onOpenShare={handleOpenShare}>
             <CalendarView onOpenNewEvent={handleOpenModal} categories={categories} />
           </ProtectedLayout>
         } />
 
         <Route path="/confirmations" element={
-          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal}>
+          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal} onOpenShare={handleOpenShare}>
             <ConfirmationCenter />
           </ProtectedLayout>
         } />
 
         <Route path="/history" element={
-          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal}>
+          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal} onOpenShare={handleOpenShare}>
             <History categories={categories} />
           </ProtectedLayout>
         } />
 
         <Route path="/admin" element={
-          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal}>
+          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal} onOpenShare={handleOpenShare}>
             {user?.role === 'ADMIN' ? (
               <AdminPanel categories={categories} onCategoryUpdate={fetchCategories} />
             ) : (
@@ -132,7 +139,7 @@ function MainApp() {
         } />
 
         <Route path="/profile" element={
-          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal}>
+          <ProtectedLayout categories={categories} onRefreshCategories={fetchCategories} onOpenModal={handleOpenModal} onOpenShare={handleOpenShare}>
             <Profile />
           </ProtectedLayout>
         } />
@@ -147,6 +154,12 @@ function MainApp() {
         onSave={handleSaveAppointment}
         initialData={editingAppt}
         categories={categories}
+      />
+
+      {/* Global Share Modal */}
+      <ShareModal
+        open={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
       />
     </>
   );
