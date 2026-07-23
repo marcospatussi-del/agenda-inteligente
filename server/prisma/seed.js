@@ -12,6 +12,7 @@ const defaultCategories = [
   { name: 'Família', color: '#FB8C00', icon: 'family_restroom', isSystem: true },
   { name: 'Compras', color: '#00ACC1', icon: 'shopping_cart', isSystem: true },
   { name: 'Aniversários', color: '#F4511E', icon: 'cake', isSystem: true },
+  { name: 'Igreja', color: '#6D4C41', icon: 'church', isSystem: true },
   { name: 'Outros', color: '#757575', icon: 'more_horiz', isSystem: true },
 ];
 
