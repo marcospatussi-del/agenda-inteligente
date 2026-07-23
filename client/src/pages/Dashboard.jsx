@@ -8,6 +8,7 @@ import API from '../services/api';
 import AppointmentCard from '../components/AppointmentCard';
 import ProductivityCharts from '../components/ProductivityCharts';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../utils/dateUtils';
 
 export default function Dashboard({ onOpenNewEvent, categories = [] }) {
   const navigate = useNavigate();
@@ -244,7 +245,7 @@ export default function Dashboard({ onOpenNewEvent, categories = [] }) {
                 <Box>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{appt.title}</Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {appt.date} às {appt.time} • {appt.category?.name}
+                    {formatDate(appt.date)} às {appt.time} • {appt.category?.name}
                   </Typography>
                 </Box>
               </Paper>

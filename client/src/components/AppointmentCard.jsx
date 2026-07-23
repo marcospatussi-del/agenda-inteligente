@@ -3,6 +3,7 @@ import {
   Card, CardContent, Typography, Box, Chip, IconButton, Menu, MenuItem
 } from '@mui/material';
 import { Icon } from './Icons';
+import { formatDate } from '../utils/dateUtils';
 
 const priorityColors = {
   VERY_HIGH: { label: 'Muito Alta', color: '#E53935', bg: '#FFEBEE' },
@@ -127,7 +128,7 @@ export default function AppointmentCard({ appointment, onEdit, onDelete, onStatu
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Icon name="schedule" color="#6750A4" fontSize={18} />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {appointment.date} às {appointment.time}
+              {formatDate(appointment.date)} às {appointment.time}
             </Typography>
           </Box>
 
