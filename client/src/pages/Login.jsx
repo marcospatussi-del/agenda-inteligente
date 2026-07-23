@@ -160,19 +160,6 @@ export default function Login() {
                 {tab === 0 ? 'Entrar' : 'Cadastrar Conta'}
               </Button>
             </form>
-
-            <Divider sx={{ my: 2 }}>OU</Divider>
-
-            <Button
-              fullWidth
-              variant="outlined"
-              size="large"
-              onClick={handleMockGoogleLogin}
-              startIcon={<Icon name="g_mobiledata" color="#EA4335" fontSize={28} />}
-              sx={{ py: 1.2, borderRadius: '24px', fontWeight: 600, color: 'text.primary', borderColor: 'divider' }}
-            >
-              Continuar com o Google
-            </Button>
           </CardContent>
         </Card>
       </Container>
